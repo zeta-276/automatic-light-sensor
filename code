@@ -15,10 +15,12 @@ void setup() {
 void loop() {
   int potval = analogRead(pot);
   int percent = map(potval, 0, 1023, 0, 100);  //remap potentiometer to 0-100 scale
-  int ambientlevel = map(analogRead(res), 0, 88, 0, 100);  //remap LDR to 0-100 scale, LDR connected with 1kΩ resistor
+  int ambientlevel = map(analogRead(res), 0, 900, 0, 100);  //remap LDR to 0-100 scale, LDR connected with 1kΩ resistor
   Serial.print(ambientlevel);
   Serial.print(" ");
   Serial.print(percent);
+  Serial.print(" ");
+  Serial.println(analogRead(res));
 
   if (ambientlevel >= percent) {
     digitalWrite(led, LOW);
@@ -35,6 +37,6 @@ void loop() {
   lcd.setCursor(0,1);
   lcd.print("Set: ");
   lcd.print(percent);
-  lcd.print(char(0x25));   // percent symnol
+  lcd.print(char(0x25));   // percent symbol
   lcd.print("   "); 
 }
