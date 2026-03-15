@@ -1,20 +1,40 @@
-// pin numbers
+#include <LiquidCrystal_I2C.h>
+LiquidCrystal_I2C lcd(0x27, 16, 2);
 int led = 2;
 int res = A0;
+int pot = A1;
 
 void setup() {
   pinMode(led,OUTPUT);
   pinMode(res,OUTPUT);
+  pinMode(pot,INPUT);
+  lcd.init();
+  lcd.backlight();
   Serial.begin(9600);
 }
-// define threshold for LDR
 void loop() {
- analogRead(res); 
- Serial.println(analogRead(res));  // with 1 kΩ resistor
-  if (analogRead(res) >= 50) {
-    digitalWrite(led, LOW);        // light off
+  int potval = analogRead(pot);
+  int percent = map(potval, 0, 1023, 0, 100);  //remap potentiometer to 0-100 scale
+  int ambientlevel = map(analogRead(res), 0, 88, 0, 100);  //remap LDR to 0-100 scale, LDR connected with 1kΩ resistor
+  Serial.print(ambientlevel);
+  Serial.print(" ");
+  Serial.print(percent);
+
+  if (ambientlevel >= percent) {
+    digitalWrite(led, LOW);
   }
   else {
-    digitalWrite(led, HIGH);       // light on
+    digitalWrite(led, HIGH);
   }
+// print ambient light levels and set light levels in percent
+  lcd.setCursor(0,0);
+  lcd.print("ambient: ");
+  lcd.print(ambientlevel);
+  lcd.print(char(0x25));  // percent symbol
+  lcd.print("   ");
+  lcd.setCursor(0,1);
+  lcd.print("Set: ");
+  lcd.print(percent);
+  lcd.print(char(0x25));   // percent symnol
+  lcd.print("   "); 
 }
